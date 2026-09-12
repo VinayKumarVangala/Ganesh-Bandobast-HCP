@@ -10,7 +10,7 @@ enum ResourceCategory {
   ambulance('AMBULANCE', 'Ambulance', Icons.local_hospital),
   diver('DIVER', 'Diver', Icons.pool),
   boat('BOAT', 'Boat', Icons.directions_boat),
-  barricade('BARRICADE', 'Barricade', Icons.barrier),
+  barricade('BARRICADE', 'Barricade', Icons.fence),
   floodlight('FLOODLIGHT', 'Floodlight', Icons.highlight),
   generator('GENERATOR', 'Generator', Icons.electrical_services),
   towTruck('TOW_TRUCK', 'Tow Truck', Icons.local_shipping),

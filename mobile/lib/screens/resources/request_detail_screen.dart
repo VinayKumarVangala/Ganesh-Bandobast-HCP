@@ -2,22 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:latlong2/latlong.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
 import '../../models/resource_enums.dart';
 import '../../models/user_models.dart';
 import '../../data/static_users.dart';
+import '../../data/static_resources.dart';
 import '../../data/police_stations.dart';
+import '../../repositories/resource_repository.dart';
 import '../../config/feature_flags.dart';
 
-class RequestDetailScreen extends ConsumerWidget {
+class RequestDetailScreen extends ConsumerStatefulWidget {
   final String requestId;
 
   const RequestDetailScreen({super.key, required this.requestId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final requestAsync = ref.watch(requestByIdProvider(requestId));
+  ConsumerState<RequestDetailScreen> createState() => _RequestDetailScreenState();
+}
+
+class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final requestAsync = ref.watch(requestByIdProvider(widget.requestId));
     final currentUserRole = UserRole.sho; // From auth context
 
     return Scaffold(
@@ -26,7 +34,7 @@ class RequestDetailScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.map),
-            onPressed: () => context.push('/resources/request/$requestId/dispatch'),
+            onPressed: () => context.push('/resources/request/${widget.requestId}/dispatch'),
             tooltip: 'Live Dispatch Map',
           ),
         ],
@@ -36,7 +44,7 @@ class RequestDetailScreen extends ConsumerWidget {
           if (request == null) {
             return const Center(child: Text('Request not found'));
           }
-          return _buildDetailView(context, ref, request, currentUserRole);
+          return _buildDetailView(context, request, currentUserRole);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
@@ -44,7 +52,7 @@ class RequestDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDetailView(BuildContext context, WidgetRef ref, ResourceRequest request, UserRole currentUserRole) {
+  Widget _buildDetailView(BuildContext context, ResourceRequest request, UserRole currentUserRole) {
     final assignedResource = request.assignedResourceId != null
         ? getResourceById(request.assignedResourceId!)
         : null;
@@ -69,7 +77,7 @@ class RequestDetailScreen extends ConsumerWidget {
           const SizedBox(height: 16),
           _buildTimelineCard(request),
           const SizedBox(height: 16),
-          _buildActionButtons(context, ref, request, currentUserRole),
+          _buildActionButtons(context, request, currentUserRole),
           const SizedBox(height: 24),
         ],
       ),
@@ -157,7 +165,7 @@ class RequestDetailScreen extends ConsumerWidget {
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.search),
                   label: const Text('Find Match'),
-                  onPressed: () => context.push('/resources/request/$requestId/matching'),
+                  onPressed: () => context.push('/resources/request/${widget.requestId}/matching'),
                 ),
               ),
             ],
@@ -310,7 +318,7 @@ class RequestDetailScreen extends ConsumerWidget {
     }
   }
 
-  Widget _buildActionButtons(BuildContext context, WidgetRef ref, ResourceRequest request, UserRole currentUserRole) {
+  Widget _buildActionButtons(BuildContext context, ResourceRequest request, UserRole currentUserRole) {
     final canApprove = currentUserRole.canApproveRequests;
     final isRaisingPS = request.raisingPoliceStationId == 'HYD-PS-001'; // From user context
     final isHoldingPS = request.assignedFromPoliceStationId == 'HYD-PS-001';
@@ -340,7 +348,7 @@ class RequestDetailScreen extends ConsumerWidget {
           label: 'Mark En Route',
           icon: Icons.local_shipping,
           color: Colors.blue,
-          onPressed: () => _updateStatus(context, ref, request, RequestStatus.enRoute),
+          onPressed: () => _updateStatus(request, RequestStatus.enRoute),
         ));
       }
       if (request.status == RequestStatus.enRoute) {
@@ -348,7 +356,7 @@ class RequestDetailScreen extends ConsumerWidget {
           label: 'Mark On Site',
           icon: Icons.location_on,
           color: Colors.teal,
-          onPressed: () => _updateStatus(context, ref, request, RequestStatus.onSite),
+          onPressed: () => _updateStatus(request, RequestStatus.onSite),
         ));
       }
       if (request.status == RequestStatus.onSite || request.status == RequestStatus.inUse) {
@@ -356,7 +364,7 @@ class RequestDetailScreen extends ConsumerWidget {
           label: 'Mark Released',
           icon: Icons.check_circle_outline,
           color: Colors.lightGreen,
-          onPressed: () => _updateStatus(context, ref, request, RequestStatus.released),
+          onPressed: () => _updateStatus(request, RequestStatus.released),
         ));
       }
       if (request.status == RequestStatus.released) {
@@ -364,7 +372,7 @@ class RequestDetailScreen extends ConsumerWidget {
           label: 'Mark Returned',
           icon: Icons.assignment_return,
           color: Colors.green,
-          onPressed: () => _showReturnDialog(context, ref, request),
+          onPressed: () => _showReturnDialog(context, request),
         ));
       }
     }
@@ -375,7 +383,7 @@ class RequestDetailScreen extends ConsumerWidget {
         label: 'Close Request',
         icon: Icons.lock,
         color: Colors.grey,
-        onPressed: () => _showCloseDialog(context, ref, request),
+        onPressed: () => _showCloseDialog(context, request),
       ));
     }
 
@@ -385,7 +393,7 @@ class RequestDetailScreen extends ConsumerWidget {
         label: 'Escalate',
         icon: Icons.warning_amber,
         color: Colors.deepOrange,
-        onPressed: () => _escalateRequest(context, ref, request),
+        onPressed: () => _escalateRequest(context, request),
       ));
     }
 
@@ -510,7 +518,7 @@ class RequestDetailScreen extends ConsumerWidget {
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
-              _updateStatus(context, ref.read(resourceRequestRepositoryProvider), request, RequestStatus.assigned);
+              _updateStatus(request, RequestStatus.assigned);
             },
             child: const Text('Approve'),
           ),
@@ -535,7 +543,7 @@ class RequestDetailScreen extends ConsumerWidget {
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
-              _updateStatus(context, ref.read(resourceRequestRepositoryProvider), request, RequestStatus.rejected);
+              _updateStatus(request, RequestStatus.rejected);
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Reject'),
@@ -545,7 +553,7 @@ class RequestDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _showReturnDialog(BuildContext context, WidgetRef ref, ResourceRequest request) {
+  void _showReturnDialog(BuildContext context, ResourceRequest request) {
     ResourceCondition condition = ResourceCondition.good;
     final fuelController = TextEditingController();
     final damageController = TextEditingController();
@@ -585,7 +593,7 @@ class RequestDetailScreen extends ConsumerWidget {
             FilledButton(
               onPressed: () {
                 Navigator.pop(context);
-                _updateStatusWithReturn(context, ref.read(resourceRequestRepositoryProvider), request, condition, fuelController.text, damageController.text);
+                _updateStatusWithReturn(request, condition, fuelController.text, damageController.text);
               },
               child: const Text('Confirm Return'),
             ),
@@ -595,7 +603,7 @@ class RequestDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _showCloseDialog(BuildContext context, WidgetRef ref, ResourceRequest request) {
+  void _showCloseDialog(BuildContext context, ResourceRequest request) {
     final controller = TextEditingController();
     showDialog(
       context: context,
@@ -611,7 +619,7 @@ class RequestDetailScreen extends ConsumerWidget {
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
-              _updateStatus(context, ref.read(resourceRequestRepositoryProvider), request, RequestStatus.closed);
+              _updateStatus(request, RequestStatus.closed);
             },
             child: const Text('Close'),
           ),
@@ -620,8 +628,9 @@ class RequestDetailScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _updateStatus(BuildContext context, ResourceRequestRepository repo, ResourceRequest request, RequestStatus newStatus) async {
+  Future<void> _updateStatus(ResourceRequest request, RequestStatus newStatus) async {
     try {
+      final repo = ref.read(resourceRequestRepositoryProvider);
       final updated = request.copyWith(status: newStatus, updatedAt: DateTime.now());
       await repo.updateRequest(updated);
       if (mounted) {
@@ -634,8 +643,9 @@ class RequestDetailScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _updateStatusWithReturn(BuildContext context, ResourceRequestRepository repo, ResourceRequest request, ResourceCondition condition, String fuelIn, String damageNotes) async {
+  Future<void> _updateStatusWithReturn(ResourceRequest request, ResourceCondition condition, String fuelIn, String damageNotes) async {
     try {
+      final repo = ref.read(resourceRequestRepositoryProvider);
       final updated = request.copyWith(status: RequestStatus.returned, updatedAt: DateTime.now());
       await repo.updateRequest(updated);
 
@@ -669,7 +679,7 @@ class RequestDetailScreen extends ConsumerWidget {
     }
   }
 
-  void _escalateRequest(BuildContext context, WidgetRef ref, ResourceRequest request) {
+  void _escalateRequest(BuildContext context, ResourceRequest request) {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Request escalated to next level'), backgroundColor: Colors.deepOrange));
   }
 

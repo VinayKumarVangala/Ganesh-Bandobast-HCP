@@ -2,6 +2,7 @@ import 'package:latlong2/latlong.dart';
 import '../models/resource_models.dart';
 import '../models/resource_enums.dart';
 import '../data/police_stations.dart';
+import '../../utils/distance.dart';
 
 final List<ResourceItem> staticResources = [
   // Abids Police Station (HYD-PS-001) - Central Hyderabad
@@ -671,7 +672,12 @@ List<ResourceItem> getAvailableResources({
   if (maxDistanceKm != null && fromLocation != null) {
     resources = resources.where((r) {
       if (r.currentLocation == null) return false;
-      return LatLng.distance(fromLocation, r.currentLocation!) <= maxDistanceKm;
+      return calculateDistance(
+            fromLocation.latitude,
+            fromLocation.longitude,
+            r.currentLocation!.latitude,
+            r.currentLocation!.longitude,
+          ) <= maxDistanceKm;
     });
   }
 
@@ -691,12 +697,31 @@ List<ResourceItem> getResourcesNearLocation(LatLng location, double radiusKm, {R
     if (r.currentLocation == null) return false;
     if (!r.isAvailable) return false;
     if (category != null && r.category != category) return false;
-    return LatLng.distance(location, r.currentLocation!) <= radiusKm;
+    return calculateDistance(
+          location.latitude,
+          location.longitude,
+          r.currentLocation!.latitude,
+          r.currentLocation!.longitude,
+        ) <= radiusKm;
   }).toList();
 
   resources.sort((a, b) {
-    final distA = a.currentLocation != null ? LatLng.distance(location, a.currentLocation!) : double.infinity;
-    final distB = b.currentLocation != null ? LatLng.distance(location, b.currentLocation!) : double.infinity;
+    final distA = a.currentLocation != null
+        ? calculateDistance(
+            location.latitude,
+            location.longitude,
+            a.currentLocation!.latitude,
+            a.currentLocation!.longitude,
+          )
+        : double.infinity;
+    final distB = b.currentLocation != null
+        ? calculateDistance(
+            location.latitude,
+            location.longitude,
+            b.currentLocation!.latitude,
+            b.currentLocation!.longitude,
+          )
+        : double.infinity;
     return distA.compareTo(distB);
   });
 

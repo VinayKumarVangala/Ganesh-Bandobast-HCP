@@ -59,9 +59,12 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/pre-installation',
+      path: '/pre-installation/:id',
       name: 'pre-installation',
-      builder: (context, state) => const PreInstallationScreen(),
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return PreInstallationScreen(applicationId: id);
+      },
     ),
     GoRoute(
       path: '/location-verification/:id',

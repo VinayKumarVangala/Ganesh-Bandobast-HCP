@@ -4,6 +4,7 @@ import '../models/resource_enums.dart';
 import '../data/police_stations.dart';
 import '../data/static_resources.dart';
 import '../config/feature_flags.dart';
+import '../../utils/distance.dart';
 
 class MatchResult {
   final PoliceStation policeStation;
@@ -52,7 +53,12 @@ class MatchingEngine {
       final policeStation = getPoliceStationById(resource.currentHoldingPoliceStationId);
       if (policeStation == null) continue;
 
-      final distanceKm = LatLng.distance(requestLocation, resource.currentLocation ?? policeStation.location);
+      final distanceKm = calculateDistance(
+        requestLocation.latitude,
+        requestLocation.longitude,
+        (resource.currentLocation ?? policeStation.location).latitude,
+        (resource.currentLocation ?? policeStation.location).longitude,
+      );
       final estimatedDurationMinutes = (distanceKm / kmPerMinute).ceil();
 
       // Calculate match score (lower is better)

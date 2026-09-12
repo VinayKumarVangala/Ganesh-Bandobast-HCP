@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../applications/my_idols_screen.dart';
 import '../login/login_screen.dart';
-import '../config/feature_flags.dart';
-import '../config/app_router.dart';
-import '../providers/resource_providers.dart';
-import '../models/resource_enums.dart';
+import '../../config/feature_flags.dart';
+import '../../config/app_router.dart';
+import '../../providers/resource_providers.dart';
+import '../../models/resource_enums.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   final String officerName;

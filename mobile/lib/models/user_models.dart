@@ -1,5 +1,6 @@
 import 'package:latlong2/latlong.dart';
 import 'resource_enums.dart';
+import '../../utils/distance.dart';
 
 class User {
   final String id;
@@ -89,7 +90,7 @@ class PoliceStationModel {
   });
 
   double distanceTo(LatLng other) {
-    return LatLng.distance(location, other);
+    return calculateDistance(location.latitude, location.longitude, other.latitude, other.longitude);
   }
 
   String get displayName => '$name ($commissionerate, Sector $sector)';

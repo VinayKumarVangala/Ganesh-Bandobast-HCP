@@ -4,6 +4,7 @@ import '../repositories/resource_repository.dart';
 import '../models/resource_models.dart';
 import '../models/resource_enums.dart';
 import '../models/user_models.dart';
+import '../data/police_stations.dart';
 import '../config/feature_flags.dart';
 
 // Repository Providers

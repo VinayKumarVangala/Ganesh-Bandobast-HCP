@@ -5,7 +5,9 @@ import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
 import '../../models/resource_enums.dart';
 import '../../data/police_stations.dart';
+import '../../data/static_resources.dart';
 import '../../config/feature_flags.dart';
+import '../../utils/distance.dart';
 
 class LiveDispatchMapScreen extends ConsumerStatefulWidget {
   final String requestId;
@@ -162,12 +164,12 @@ class _LiveDispatchMapScreenState extends ConsumerState<LiveDispatchMapScreen> {
 
   Widget _buildBottomSheet() {
     final distance = _resourceCurrentLocation != null && _fromPs != null
-        ? LatLng.distance(_fromPs!.location, _resourceCurrentLocation!)
+        ? calculateDistance(_fromPs!.location.latitude, _fromPs!.location.longitude, _resourceCurrentLocation!.latitude, _resourceCurrentLocation!.longitude)
         : 0.0;
 
     final remainingDistance = _resourceCurrentLocation != null
-        ? LatLng.distance(_resourceCurrentLocation!, _request!.siteLocation)
-        : LatLng.distance(_fromPs?.location ?? _request!.siteLocation, _request!.siteLocation);
+        ? calculateDistance(_resourceCurrentLocation!.latitude, _resourceCurrentLocation!.longitude, _request!.siteLocation.latitude, _request!.siteLocation.longitude)
+        : calculateDistance(_fromPs?.location.latitude ?? _request!.siteLocation.latitude, _fromPs?.location.longitude ?? _request!.siteLocation.longitude, _request!.siteLocation.latitude, _request!.siteLocation.longitude);
 
     final progress = distance / (distance + remainingDistance) * 100;
 

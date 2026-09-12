@@ -1,4 +1,5 @@
 import 'package:latlong2/latlong.dart';
+import '../../utils/distance.dart';
 
 enum Commissionerate {
   hyderabad('Hyderabad'),
@@ -33,7 +34,7 @@ class PoliceStation {
   });
 
   double distanceTo(LatLng other) {
-    return LatLng.distance(location, other);
+    return calculateDistance(location.latitude, location.longitude, other.latitude, other.longitude);
   }
 
   String get displayName => '$name (${commissionerate.displayName}, Sector $sector)';

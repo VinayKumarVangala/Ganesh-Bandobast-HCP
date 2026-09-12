@@ -104,7 +104,7 @@ class ResourceCommandDashboardScreen extends ConsumerWidget {
 
                     // Initialize sectors
                     for (final ps in stations) {
-                      sectorData[ps.sector] = _SectorStats(sector: ps.sector, commissionerate: ps.commissionerate);
+                      sectorData[ps.sector] = _SectorStats(sector: ps.sector, commissionerate: ps.commissionerate.displayName);
                     }
 
                     // Count resources by sector

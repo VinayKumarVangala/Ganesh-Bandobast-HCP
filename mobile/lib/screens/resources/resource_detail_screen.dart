@@ -52,8 +52,8 @@ class ResourceDetailScreen extends ConsumerWidget {
           _buildHeaderCard(resource),
           const SizedBox(height: 16),
           _buildSpecsCard(resource),
-          const SizedBox(height: 16),
-          _buildLocationCard(resource, ps),
+const SizedBox(height: 16),
+            _buildLocationCard(resource, ps, owningPs),
           const SizedBox(height: 16),
           _buildCustodianCard(resource),
           const SizedBox(height: 16),
@@ -167,7 +167,7 @@ class ResourceDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLocationCard(ResourceItem resource, PoliceStation? ps) {
+  Widget _buildLocationCard(ResourceItem resource, PoliceStation? ps, PoliceStation? owningPs) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -375,12 +375,12 @@ class ResourceDetailScreen extends ConsumerWidget {
   }
 }
 
-class _StatChip {
-  final String label;
-  final String value;
-  final Color color;
-
-  const _StatChip({required this.label, required this.value, required this.color});
+Widget _StatChip({required String label, required String value, required Color color}) {
+  return Chip(
+    label: Text('$label: $value', style: TextStyle(fontSize: 12, color: color)),
+    backgroundColor: color.withValues(alpha: 0.1),
+    visualDensity: VisualDensity.compact,
+  );
 }
 
 class _SpecRow {

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
 import '../../models/resource_enums.dart';
 import '../../config/feature_flags.dart';
 import '../../data/police_stations.dart';
-import '../dashboard/dashboard_screen.dart';
+import '../../utils/distance.dart';
 
 class ResourceDirectoryScreen extends ConsumerStatefulWidget {
   const ResourceDirectoryScreen({super.key});
@@ -286,7 +287,7 @@ class _ResourceListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final ps = getPoliceStationById(resource.currentHoldingPoliceStationId);
     final distance = ps != null && resource.currentLocation != null
-        ? LatLng.distance(ps.location, resource.currentLocation!)
+        ? calculateDistance(ps.location.latitude, ps.location.longitude, resource.currentLocation!.latitude, resource.currentLocation!.longitude)
         : null;
 
     return Card(
