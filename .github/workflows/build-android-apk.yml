@@ -20,9 +20,9 @@ on:
           - both
 
 env:
-  # Use Flutter 3.19+ which includes Dart 3.19+ (satisfies ^3.13.1 requirement)
-  # Matches local Flutter 3.47.3 with Dart 3.13.3
-  FLUTTER_VERSION: '3.19.0'
+  # Use Flutter 3.47.3 which includes Dart 3.13.3 (matches local dev environment)
+  # Satisfies sdk: ">=3.13.1 <4.0.0" in pubspec.yaml
+  FLUTTER_VERSION: '3.47.3'
   JAVA_VERSION: '17'
   PROJECT_DIR: 'mobile'
 
