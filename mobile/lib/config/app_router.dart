@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../screens/login/login_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
@@ -12,6 +13,10 @@ import '../screens/resources/resource_directory_screen.dart';
 import '../screens/resources/resource_detail_screen.dart';
 import '../screens/resources/raise_resource_request_screen.dart';
 import '../screens/resources/request_matching_screen.dart';
+import '../screens/resources/my_station_requests_screen.dart';
+import '../screens/resources/request_detail_screen.dart';
+import '../screens/resources/live_dispatch_map_screen.dart';
+import '../screens/resources/resource_command_dashboard_screen.dart';
 import '../config/feature_flags.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -87,7 +92,11 @@ final GoRouter appRouter = GoRouter(
       name: 'ar-measurement',
       builder: (context, state) {
         final id = state.pathParameters['id']!;
-        return ArMeasurementScreen(applicationId: id);
+        final extra = state.extra as Map<String, String>?;
+        return ArMeasurementScreen(
+          applicationId: id,
+          measurementType: extra?['measurementType'] ?? 'distance',
+        );
       },
     ),
 

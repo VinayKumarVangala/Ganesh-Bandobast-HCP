@@ -1,5 +1,5 @@
 // Models barrel export
-export 'ar_measurement_result.dart';
-export 'resource_enums.dart';
-export 'resource_models.dart';
-export 'user_models.dart';
+export 'models/ar_measurement_result.dart';
+export 'models/resource_enums.dart';
+export 'models/resource_models.dart';
+export 'models/user_models.dart';

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum ResourceCategory {
   crane('CRANE', 'Crane', Icons.construction),
   gasCutter('GAS_CUTTER', 'Gas Cutter', Icons.water_drop),

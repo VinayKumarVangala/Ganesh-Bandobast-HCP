@@ -1,6 +1,5 @@
 import '../models/user_models.dart';
 import '../models/resource_enums.dart';
-import '../data/police_stations.dart';
 
 final List<User> staticUsers = [
   // Hyderabad Commissionerate
