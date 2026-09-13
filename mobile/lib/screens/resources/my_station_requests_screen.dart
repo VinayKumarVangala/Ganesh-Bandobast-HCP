@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
-import '../../models/resource_enums.dart';
-import '../../config/feature_flags.dart';
 
 class MyStationRequestsScreen extends ConsumerStatefulWidget {
   const MyStationRequestsScreen({super.key});
@@ -168,7 +166,7 @@ class _RequestListTile extends StatelessWidget {
           children: [
             const SizedBox(height: 4),
             Text('${request.resourceCategory.displayName} x${request.quantityRequested}'),
-            Text('${request.siteAddress}'),
+            Text(request.siteAddress),
             Text('Priority: ${request.priority.displayName}', style: TextStyle(color: request.priority.color, fontWeight: FontWeight.w500)),
           ],
         ),

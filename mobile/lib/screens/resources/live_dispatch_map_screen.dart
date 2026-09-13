@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
-import '../../models/resource_enums.dart';
 import '../../data/police_stations.dart';
 import '../../data/static_resources.dart';
-import '../../config/feature_flags.dart';
 import '../../utils/distance.dart';
 
 class LiveDispatchMapScreen extends ConsumerStatefulWidget {
@@ -22,7 +20,6 @@ class _LiveDispatchMapScreenState extends ConsumerState<LiveDispatchMapScreen> {
   ResourceRequest? _request;
   ResourceItem? _resource;
   PoliceStation? _fromPs;
-  PoliceStation? _toPs;
   LatLng? _resourceCurrentLocation;
   bool _isLoading = true;
   String? _error;
@@ -57,8 +54,6 @@ class _LiveDispatchMapScreenState extends ConsumerState<LiveDispatchMapScreen> {
       if (request.assignedFromPoliceStationId != null) {
         _fromPs = getPoliceStationById(request.assignedFromPoliceStationId!);
       }
-
-      _toPs = getPoliceStationById(request.raisingPoliceStationId);
 
       setState(() => _isLoading = false);
     } catch (e) {
@@ -375,10 +370,10 @@ class _StaticDispatchMap extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text('Live Dispatch Map (MapmyIndia Integration)', style: TextStyle(fontSize: 16, color: Colors.grey[600])),
                 const SizedBox(height: 8),
-                Text('Source: ${fromLabel}', style: TextStyle(color: Colors.grey[500])),
-                Text('Destination: ${toLabel}', style: TextStyle(color: Colors.grey[500])),
+                Text('Source: $fromLabel', style: TextStyle(color: Colors.grey[500])),
+                Text('Destination: $toLabel', style: TextStyle(color: Colors.grey[500])),
                 if (resourceLocation != null)
-                  Text('Resource: ${resourceLabel}', style: TextStyle(color: Colors.grey[500])),
+                  Text('Resource: $resourceLabel', style: TextStyle(color: Colors.grey[500])),
               ],
             ),
           ),
@@ -417,8 +412,6 @@ class _StaticDispatchMap extends StatelessWidget {
 
   Offset _calculatePosition(LatLng point) {
     // Simple projection for visualization
-    const double latRange = 0.1; // ~11 km
-    const double lngRange = 0.1;
     const double mapWidth = 400.0;
     const double mapHeight = 400.0;
 
@@ -492,12 +485,6 @@ class _RoutePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF17365D)
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
     final dashPaint = Paint()
       ..color = Colors.grey
       ..strokeWidth = 2

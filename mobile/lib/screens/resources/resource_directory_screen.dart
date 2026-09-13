@@ -5,7 +5,6 @@ import 'package:latlong2/latlong.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
 import '../../models/resource_enums.dart';
-import '../../config/feature_flags.dart';
 import '../../data/police_stations.dart';
 import '../../utils/distance.dart';
 
@@ -482,7 +481,7 @@ class _FilterChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Chip(
       label: Text(label, style: const TextStyle(fontSize: 12)),
-      backgroundColor: color?.withOpacity(0.2) ?? const Color(0xFF17365D).withOpacity(0.2),
+      backgroundColor: color?.withValues(alpha: 0.2) ?? const Color(0xFF17365D).withValues(alpha: 0.2),
       labelStyle: TextStyle(color: color ?? const Color(0xFF17365D), fontWeight: FontWeight.w500),
       deleteIcon: const Icon(Icons.close, size: 16),
       onDeleted: onDeleted,

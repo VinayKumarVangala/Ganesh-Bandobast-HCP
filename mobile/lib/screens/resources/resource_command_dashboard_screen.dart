@@ -3,10 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
 import '../../models/resource_enums.dart';
-import '../../services/matching_engine.dart';
 import '../../data/police_stations.dart';
-import '../../data/static_resources.dart';
-import '../../config/feature_flags.dart';
 
 class ResourceCommandDashboardScreen extends ConsumerWidget {
   const ResourceCommandDashboardScreen({super.key});
@@ -60,11 +57,6 @@ class ResourceCommandDashboardScreen extends ConsumerWidget {
             final assignedCount = requests.where((r) => r.status == RequestStatus.assigned).length;
             final enRouteCount = requests.where((r) => r.status == RequestStatus.enRoute).length;
             final onSiteCount = requests.where((r) => r.status == RequestStatus.onSite).length;
-            final breachedCount = requests.where((r) => r.isSlaBreached).length;
-
-            final totalResources = resources.length;
-            final availableResources = resources.where((r) => r.isAvailable).length;
-            final deployedResources = resources.where((r) => r.isDeployed).length;
 
             return Row(
               children: [
@@ -79,11 +71,11 @@ class ResourceCommandDashboardScreen extends ConsumerWidget {
             );
           },
           loading: () => const SizedBox(height: 120, child: Center(child: CircularProgressIndicator())),
-          error: (_, __) => const SizedBox.shrink(),
+          error: (_, _) => const SizedBox.shrink(),
         );
       },
       loading: () => const SizedBox(height: 120, child: Center(child: CircularProgressIndicator())),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
     );
   }
 
@@ -129,11 +121,11 @@ class ResourceCommandDashboardScreen extends ConsumerWidget {
                     );
                   },
                   loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (_, __) => const SizedBox.shrink(),
+                  error: (_, _) => const SizedBox.shrink(),
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
           ],
         ),
@@ -175,7 +167,7 @@ class ResourceCommandDashboardScreen extends ConsumerWidget {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
           ],
         ),
@@ -234,11 +226,11 @@ class ResourceCommandDashboardScreen extends ConsumerWidget {
                     );
                   },
                   loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (_, __) => const SizedBox.shrink(),
+                  error: (_, _) => const SizedBox.shrink(),
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
           ],
         ),
@@ -280,7 +272,7 @@ class ResourceCommandDashboardScreen extends ConsumerWidget {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
           ],
         ),
@@ -314,7 +306,7 @@ class ResourceCommandDashboardScreen extends ConsumerWidget {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
           ],
         ),

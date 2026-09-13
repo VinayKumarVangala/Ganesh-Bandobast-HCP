@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
-import '../../models/resource_enums.dart';
 import '../../data/police_stations.dart';
 
 class ResourceDetailScreen extends ConsumerWidget {
@@ -114,11 +113,11 @@ const SizedBox(height: 16),
             const SizedBox(height: 16),
             Row(
               children: [
-                _StatChip(label: 'Available', value: '${resource.quantityAvailable}', color: Colors.green),
+                _statChip(label: 'Available', value: '${resource.quantityAvailable}', color: Colors.green),
                 const SizedBox(width: 12),
-                _StatChip(label: 'Deployed', value: '${resource.quantityDeployed}', color: Colors.orange),
+                _statChip(label: 'Deployed', value: '${resource.quantityDeployed}', color: Colors.orange),
                 const SizedBox(width: 12),
-                _StatChip(label: 'Total', value: '${resource.quantityTotal}', color: Colors.blue),
+                _statChip(label: 'Total', value: '${resource.quantityTotal}', color: Colors.blue),
               ],
             ),
           ],
@@ -144,7 +143,7 @@ const SizedBox(height: 16),
           children: [
             const Text('Specifications', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            ...specs.map((s) => _buildSpecRow(s)).toList(),
+            ...specs.map((s) => _buildSpecRow(s)),
           ],
         ),
       ),
@@ -177,22 +176,22 @@ const SizedBox(height: 16),
             const Text('Current Location', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             if (resource.currentLocation != null) ...[
-              _InfoRow(Icons.location_on, 'Coordinates', '${resource.currentLocation!.latitude.toStringAsFixed(6)}, ${resource.currentLocation!.longitude.toStringAsFixed(6)}'),
+              _infoRow(Icons.location_on, 'Coordinates', '${resource.currentLocation!.latitude.toStringAsFixed(6)}, ${resource.currentLocation!.longitude.toStringAsFixed(6)}'),
               const SizedBox(height: 8),
             ],
             if (ps != null) ...[
-              _InfoRow(Icons.local_police, 'Holding Police Station', ps.displayName),
-              _InfoRow(Icons.contact_phone, 'PS Contact', ps.contactNumber),
-              _InfoRow(Icons.person, 'Duty Officer', '${ps.dutyOfficerName} (${ps.dutyOfficerPhone})'),
+              _infoRow(Icons.local_police, 'Holding Police Station', ps.displayName),
+              _infoRow(Icons.contact_phone, 'PS Contact', ps.contactNumber),
+              _infoRow(Icons.person, 'Duty Officer', '${ps.dutyOfficerName} (${ps.dutyOfficerPhone})'),
               const SizedBox(height: 8),
             ],
             if (owningPs != null && owningPs.id != ps?.id) ...[
               const Divider(),
-              _InfoRow(Icons.account_balance, 'Owning Police Station', owningPs.displayName),
+              _infoRow(Icons.account_balance, 'Owning Police Station', owningPs.displayName),
             ],
             if (resource.lastKnownLocationAt != null) ...[
               const Divider(),
-              _InfoRow(Icons.access_time, 'Last Location Update', _formatDateTime(resource.lastKnownLocationAt!)),
+              _infoRow(Icons.access_time, 'Last Location Update', _formatDateTime(resource.lastKnownLocationAt!)),
             ],
           ],
         ),
@@ -214,9 +213,9 @@ const SizedBox(height: 16),
             const Text('Custodian', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             if (resource.custodianName != null)
-              _InfoRow(Icons.person, 'Name', resource.custodianName!),
+              _infoRow(Icons.person, 'Name', resource.custodianName!),
             if (resource.custodianPhone != null)
-              _InfoRow(Icons.phone, 'Phone', resource.custodianPhone!, onTap: () => _launchPhone(resource.custodianPhone!)),
+              _infoRow(Icons.phone, 'Phone', resource.custodianPhone!, onTap: () => _launchPhone(resource.custodianPhone!)),
           ],
         ),
       ),
@@ -232,9 +231,9 @@ const SizedBox(height: 16),
           children: [
             const Text('Service History', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            _InfoRow(Icons.build, 'Last Serviced', resource.lastServicedAt != null ? _formatDate(resource.lastServicedAt!) : 'Not recorded'),
-            _InfoRow(Icons.calendar_today, 'Added to System', _formatDate(resource.createdAt)),
-            _InfoRow(Icons.update, 'Last Updated', _formatDate(resource.updatedAt)),
+            _infoRow(Icons.build, 'Last Serviced', resource.lastServicedAt != null ? _formatDate(resource.lastServicedAt!) : 'Not recorded'),
+            _infoRow(Icons.calendar_today, 'Added to System', _formatDate(resource.createdAt)),
+            _infoRow(Icons.update, 'Last Updated', _formatDate(resource.updatedAt)),
             if (resource.remarks != null && resource.remarks!.isNotEmpty) ...[
               const Divider(),
               const Text('Remarks', style: TextStyle(fontWeight: FontWeight.w500)),
@@ -319,7 +318,7 @@ const SizedBox(height: 16),
     );
   }
 
-  Widget _InfoRow(IconData icon, String label, String value, {VoidCallback? onTap}) {
+  Widget _infoRow(IconData icon, String label, String value, {VoidCallback? onTap}) {
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -375,7 +374,7 @@ const SizedBox(height: 16),
   }
 }
 
-Widget _StatChip({required String label, required String value, required Color color}) {
+Widget _statChip({required String label, required String value, required Color color}) {
   return Chip(
     label: Text('$label: $value', style: TextStyle(fontSize: 12, color: color)),
     backgroundColor: color.withValues(alpha: 0.1),

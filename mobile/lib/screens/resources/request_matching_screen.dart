@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:latlong2/latlong.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
 import '../../models/resource_enums.dart';
 import '../../services/matching_engine.dart';
-import '../../data/static_resources.dart';
-import '../../data/police_stations.dart';
-import '../../config/feature_flags.dart';
 
 class RequestMatchingScreen extends ConsumerStatefulWidget {
   final String requestId;

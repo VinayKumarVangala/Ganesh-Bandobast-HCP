@@ -6,9 +6,6 @@ import 'package:latlong2/latlong.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
 import '../../models/resource_enums.dart';
-import '../../config/feature_flags.dart';
-import '../../data/police_stations.dart';
-import '../applications/my_idols_screen.dart';
 
 class RaiseResourceRequestScreen extends ConsumerStatefulWidget {
   const RaiseResourceRequestScreen({super.key});
@@ -113,7 +110,7 @@ class _RaiseResourceRequestScreenState extends ConsumerState<RaiseResourceReques
 
   Widget _buildCategoryDropdown() {
     return DropdownButtonFormField<ResourceCategory>(
-      value: _selectedCategory,
+      initialValue: _selectedCategory,
       decoration: _inputDecoration('Resource Category', Icons.category),
       items: ResourceCategory.values.map((cat) {
         return DropdownMenuItem(
@@ -225,6 +222,7 @@ class _RaiseResourceRequestScreenState extends ConsumerState<RaiseResourceReques
       lastDate: DateTime.now().add(const Duration(days: 30)),
     );
     if (date == null) return;
+    if (!mounted) return;
 
     final time = await showTimePicker(
       context: context,
@@ -315,7 +313,7 @@ class _RaiseResourceRequestScreenState extends ConsumerState<RaiseResourceReques
     ];
 
     return DropdownButtonFormField<String>(
-      value: _selectedApplicationId,
+      initialValue: _selectedApplicationId,
       decoration: _inputDecoration('Link to Idol Application', Icons.link),
       hint: const Text('Select an application (optional)'),
       items: [

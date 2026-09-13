@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../applications/my_idols_screen.dart';
-import '../login/login_screen.dart';
 import '../../config/feature_flags.dart';
-import '../../config/app_router.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_enums.dart';
 
@@ -88,7 +85,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 );
               },
               loading: () => const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
-              error: (_, __) => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
             ),
           IconButton(
             tooltip: 'Logout',
@@ -161,7 +158,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       return Text('${myRequests.length} active request${myRequests.length != 1 ? 's' : ''}');
                     },
                     loading: () => const Text('Loading...'),
-                    error: (_, __) => const Text('Error loading requests'),
+                    error: (_, _) => const Text('Error loading requests'),
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push('/resources/my-requests'),

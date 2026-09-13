@@ -1,7 +1,6 @@
 import 'package:latlong2/latlong.dart';
 import '../models/resource_models.dart';
 import '../models/resource_enums.dart';
-import '../data/police_stations.dart';
 import '../../utils/distance.dart';
 
 final List<ResourceItem> staticResources = [

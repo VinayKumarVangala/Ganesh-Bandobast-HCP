@@ -1,14 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:mockito/mockito.dart';
-import '../../lib/screens/resources/resource_directory_screen.dart';
-import '../../lib/providers/resource_providers.dart';
-import '../../lib/repositories/resource_repository.dart';
-import '../../lib/models/resource_models.dart';
-import '../../lib/models/resource_enums.dart';
-import '../../lib/config/feature_flags.dart';
+import 'package:ganesh_bandobust_mobile/screens/resources/resource_directory_screen.dart';
+import 'package:ganesh_bandobust_mobile/providers/resource_providers.dart';
+import 'package:ganesh_bandobust_mobile/repositories/resource_repository.dart';
+import 'package:ganesh_bandobust_mobile/models/resource_models.dart';
+import 'package:ganesh_bandobust_mobile/models/resource_enums.dart';
 
 class MockResourceRepository extends Mock implements ResourceRepository {}
 
@@ -19,11 +17,11 @@ void main() {
     setUp(() {
       mockRepo = MockResourceRepository();
       // Enable feature flag for tests
-      FeatureFlags.enableResourceSharing = true;
+      // FeatureFlags.enableResourceSharing = true;
     });
 
     tearDown(() {
-      FeatureFlags.enableResourceSharing = false;
+      // FeatureFlags.enableResourceSharing = false;
     });
 
     Widget createTestWidget(Widget child) {

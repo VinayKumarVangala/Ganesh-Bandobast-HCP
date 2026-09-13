@@ -1,9 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import '../../lib/services/matching_engine.dart';
-import '../../lib/models/resource_models.dart';
-import '../../lib/models/resource_enums.dart';
-import '../../lib/data/police_stations.dart';
+import 'package:ganesh_bandobust_mobile/services/matching_engine.dart';
+import 'package:ganesh_bandobust_mobile/models/resource_enums.dart';
 
 void main() {
   group('MatchingEngine', () {

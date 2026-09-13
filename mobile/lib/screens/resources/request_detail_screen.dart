@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:latlong2/latlong.dart';
 import '../../providers/resource_providers.dart';
 import '../../models/resource_models.dart';
 import '../../models/resource_enums.dart';
@@ -10,8 +9,6 @@ import '../../models/user_models.dart';
 import '../../data/static_users.dart';
 import '../../data/static_resources.dart';
 import '../../data/police_stations.dart';
-import '../../repositories/resource_repository.dart';
-import '../../config/feature_flags.dart';
 
 class RequestDetailScreen extends ConsumerStatefulWidget {
   final String requestId;
@@ -126,12 +123,12 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
             ),
             const SizedBox(height: 16),
             if (request.applicationId != null)
-              _InfoRow(Icons.link, 'Linked Application', request.applicationId!),
-            _InfoRow(Icons.location_city, 'Mandal', request.mandalName),
-            _InfoRow(Icons.access_time, 'Required', '${_formatDateTime(request.requiredAt)} - ${_formatDateTime(request.requiredUntil)}'),
+              _infoRow(Icons.link, 'Linked Application', request.applicationId!),
+            _infoRow(Icons.location_city, 'Mandal', request.mandalName),
+            _infoRow(Icons.access_time, 'Required', '${_formatDateTime(request.requiredAt)} - ${_formatDateTime(request.requiredUntil)}'),
             if (request.slaDueAt != null) ...[
               const SizedBox(height: 8),
-              _InfoRow(
+              _infoRow(
                 Icons.timer,
                 'SLA Due',
                 _formatDateTime(request.slaDueAt!),
@@ -140,7 +137,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
             ],
             if (request.escalationLevel > 0) ...[
               const SizedBox(height: 8),
-              _InfoRow(Icons.trending_up, 'Escalation Level', 'Level ${request.escalationLevel}', valueStyle: const TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.bold)),
+              _infoRow(Icons.trending_up, 'Escalation Level', 'Level ${request.escalationLevel}', valueStyle: const TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.bold)),
             ],
           ],
         ),
@@ -219,18 +216,18 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
           children: [
             const Text('Locations', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            _InfoRow(Icons.flag, 'Site Address', request.siteAddress),
-            _InfoRow(Icons.gps_fixed, 'Site Coordinates', '${request.siteLocation.latitude.toStringAsFixed(6)}, ${request.siteLocation.longitude.toStringAsFixed(6)}'),
+            _infoRow(Icons.flag, 'Site Address', request.siteAddress),
+            _infoRow(Icons.gps_fixed, 'Site Coordinates', '${request.siteLocation.latitude.toStringAsFixed(6)}, ${request.siteLocation.longitude.toStringAsFixed(6)}'),
             const Divider(),
             if (fromPs != null) ...[
-              _InfoRow(Icons.local_shipping, 'Source PS', fromPs.displayName),
-              _InfoRow(Icons.contact_phone, 'Source PS Contact', fromPs.contactNumber),
-              _InfoRow(Icons.person, 'Duty Officer', '${fromPs.dutyOfficerName} (${fromPs.dutyOfficerPhone})'),
+              _infoRow(Icons.local_shipping, 'Source PS', fromPs.displayName),
+              _infoRow(Icons.contact_phone, 'Source PS Contact', fromPs.contactNumber),
+              _infoRow(Icons.person, 'Duty Officer', '${fromPs.dutyOfficerName} (${fromPs.dutyOfficerPhone})'),
               const Divider(),
             ],
             if (raisingPs != null) ...[
-              _InfoRow(Icons.local_police, 'Requesting PS', raisingPs.displayName),
-              _InfoRow(Icons.contact_phone, 'Requesting PS Contact', raisingPs.contactNumber),
+              _infoRow(Icons.local_police, 'Requesting PS', raisingPs.displayName),
+              _infoRow(Icons.contact_phone, 'Requesting PS Contact', raisingPs.contactNumber),
             ],
           ],
         ),
@@ -247,10 +244,10 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
           children: [
             const Text('Contact Information', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            _InfoRow(Icons.person, 'Raised By', raisedByUser?.name ?? request.raisedByUserId),
-            _InfoRow(Icons.person, 'Site Contact', request.contactName),
-            _InfoRow(Icons.phone, 'Site Phone', request.contactPhone, onTap: () => _launchPhone(request.contactPhone)),
-            _InfoRow(Icons.description, 'Reason', request.reason),
+            _infoRow(Icons.person, 'Raised By', raisedByUser?.name ?? request.raisedByUserId),
+            _infoRow(Icons.person, 'Site Contact', request.contactName),
+            _infoRow(Icons.phone, 'Site Phone', request.contactPhone, onTap: () => _launchPhone(request.contactPhone)),
+            _infoRow(Icons.description, 'Reason', request.reason),
           ],
         ),
       ),
@@ -266,20 +263,20 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
           children: [
             const Text('Timeline', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            _TimelineEvent(
+            _timelineEvent(
               title: 'Request Created',
               time: request.createdAt,
               description: 'Request raised by ${request.raisedByUserId}',
               isCompleted: true,
             ),
             if (request.approvedAt != null)
-              _TimelineEvent(
+              _timelineEvent(
                 title: 'Approved',
                 time: request.approvedAt!,
                 description: 'Approved by ${request.approvedByUserId}',
                 isCompleted: true,
               ),
-            _TimelineEvent(
+            _timelineEvent(
               title: _getStatusDisplay(request.status),
               time: request.updatedAt,
               description: 'Current status: ${request.status.displayName}',
@@ -287,7 +284,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
               isCurrent: !request.status.isTerminal,
             ),
             if (request.status.isTerminal)
-              _TimelineEvent(
+              _timelineEvent(
                 title: 'Closed',
                 time: request.updatedAt,
                 description: 'Request closed',
@@ -327,13 +324,13 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
 
     // SHO of lending PS: Approve / Reject / Assign specific asset
     if (canApprove && isHoldingPS && request.status == RequestStatus.open) {
-      actions.add(_ActionButton(
+      actions.add(_actionButton(
         label: 'Approve',
         icon: Icons.check_circle,
         color: Colors.green,
         onPressed: () => _showApproveDialog(context, request),
       ));
-      actions.add(_ActionButton(
+      actions.add(_actionButton(
         label: 'Reject',
         icon: Icons.cancel,
         color: Colors.red,
@@ -344,7 +341,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
     // Raising officer: Mark En Route / On Site / Released / Returned
     if (isRaisingPS) {
       if (request.status == RequestStatus.assigned) {
-        actions.add(_ActionButton(
+        actions.add(_actionButton(
           label: 'Mark En Route',
           icon: Icons.local_shipping,
           color: Colors.blue,
@@ -352,7 +349,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
         ));
       }
       if (request.status == RequestStatus.enRoute) {
-        actions.add(_ActionButton(
+        actions.add(_actionButton(
           label: 'Mark On Site',
           icon: Icons.location_on,
           color: Colors.teal,
@@ -360,7 +357,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
         ));
       }
       if (request.status == RequestStatus.onSite || request.status == RequestStatus.inUse) {
-        actions.add(_ActionButton(
+        actions.add(_actionButton(
           label: 'Mark Released',
           icon: Icons.check_circle_outline,
           color: Colors.lightGreen,
@@ -368,7 +365,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
         ));
       }
       if (request.status == RequestStatus.released) {
-        actions.add(_ActionButton(
+        actions.add(_actionButton(
           label: 'Mark Returned',
           icon: Icons.assignment_return,
           color: Colors.green,
@@ -379,7 +376,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
 
     // SHO of lending PS: Close with remarks
     if (canApprove && isHoldingPS && request.status == RequestStatus.returned) {
-      actions.add(_ActionButton(
+      actions.add(_actionButton(
         label: 'Close Request',
         icon: Icons.lock,
         color: Colors.grey,
@@ -389,7 +386,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
 
     // Any superior: Escalate
     if (currentUserRole.canEscalate && !request.status.isTerminal) {
-      actions.add(_ActionButton(
+      actions.add(_actionButton(
         label: 'Escalate',
         icon: Icons.warning_amber,
         color: Colors.deepOrange,
@@ -416,7 +413,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
     );
   }
 
-  Widget _InfoRow(IconData icon, String label, String value, {TextStyle? valueStyle, VoidCallback? onTap}) {
+  Widget _infoRow(IconData icon, String label, String value, {TextStyle? valueStyle, VoidCallback? onTap}) {
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -441,7 +438,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
     );
   }
 
-  Widget _TimelineEvent({
+  Widget _timelineEvent({
     required String title,
     required DateTime time,
     required String description,
@@ -490,7 +487,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
     );
   }
 
-  Widget _ActionButton({
+  Widget _actionButton({
     required String label,
     required IconData icon,
     required Color color,
@@ -568,7 +565,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<ResourceCondition>(
-                  value: condition,
+                  initialValue: condition,
                   decoration: const InputDecoration(labelText: 'Condition on Return'),
                   items: ResourceCondition.values.map((c) => DropdownMenuItem(value: c, child: Text(c.displayName))).toList(),
                   onChanged: (v) => setState(() => condition = v!),
